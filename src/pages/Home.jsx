@@ -7,8 +7,7 @@ import { useState } from "react";
 import CreateAssignmentForm from "../components/assignmentform.jsx";
 
 export default function Home() {
-
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const assignments = useSelector(
     (state) => state.assignment.assignments
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
-
+import axios from "axios";
+import useWebsocket from "../Hooks/useWebsocket.jsx";
 export default function CreateAssignmentForm({
     open,
     setOpen,
@@ -38,6 +39,59 @@ export default function CreateAssignmentForm({
             },
         ],
     });
+    const handleWebsocketMessage = (message) => {
+        console.log("Received WebSocket message:", message);
+        // Handle the message as needed
+    };
+    const ws = useWebsocket(handleWebsocketMessage);
+    const handleOnSubmit = async(e) => {
+        
+        // Here you can handle the form submission, e.g., send the data to the backend
+        console.log("Form Data:", formData);
+        const payload = new FormData();
+        payload.append("pdf", formData.pdf);
+        payload.append("dueDate", formData.dueDate);
+        payload.append("additionalInfo", formData.additionalInfo);
+        payload.append("questionTypes", JSON.stringify(formData.questionTypes));
+        const response = await axios.post("http://localhost:5000/api/assignment/generate", payload)
+        console.log("Response from server:", response.data);
+       
+            setFormData({
+        pdf: null,
+        dueDate: "",
+        additionalInfo: "",
+
+        questionTypes: [
+            {
+                type: "Multiple Choice Questions",
+                questions: 5,
+                marks: 1,
+            },
+            {
+                type: "Short Questions",
+                questions: 3,
+                marks: 2,
+            },
+            {
+                type: "Long Questions",
+                questions: 2,
+                marks: 5,
+            },
+            {
+                type: "Diagram / Graph Based",
+                questions: 2,
+                marks: 5,
+            },
+            {
+                type: "Numerical Problems",
+                questions: 4,
+                marks: 3,
+            },
+        ],
+    })
+        
+        setOpen(false)
+    }
     const handleFileOnChange = (e) => {
         setFormData({
             ...formData,
@@ -331,6 +385,7 @@ export default function CreateAssignmentForm({
 
                 {/* Submit Button */}
                 <button
+                onClick={handleOnSubmit}
                     className="
             w-full
             bg-black
