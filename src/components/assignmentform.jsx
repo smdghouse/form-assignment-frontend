@@ -1,12 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
-import useWebsocket from "../Hooks/useWebsocket.jsx";
+// import useWebsocket from "../Hooks/useWebsocket.jsx";
 export default function CreateAssignmentForm({
     open,
     setOpen,
+    popupset,
+    loadingset,
+    asgIdset,
+    currentId
 }) {
 
     const [formData, setFormData] = useState({
+        title: "",
         pdf: null,
         dueDate: "",
         additionalInfo: "",
@@ -39,58 +44,76 @@ export default function CreateAssignmentForm({
             },
         ],
     });
-    const handleWebsocketMessage = (message) => {
-        console.log("Received WebSocket message:", message);
-        // Handle the message as needed
-    };
-    const ws = useWebsocket(handleWebsocketMessage);
-    const handleOnSubmit = async(e) => {
-        
+    //const ws = useWebsocket(handleWebsocketMessage);
+    const handleOnSubmit = async (e) => {
+        if (!formData.pdf) {
+            alert("Please upload a PDF");
+            return;
+        }
+        if(!formData.title)
+        {
+            alert("please enter title")
+            return;
+        }
+
+        if (!formData.dueDate) {
+            alert("Please select a due date");
+            return;
+        }
+        setOpen(false)
+        loadingset(true)
+        popupset(true)
+        console.log("PDF File:", formData.pdf)
+
         // Here you can handle the form submission, e.g., send the data to the backend
         console.log("Form Data:", formData);
         const payload = new FormData();
+        payload.append("title",formData.title)
         payload.append("pdf", formData.pdf);
         payload.append("dueDate", formData.dueDate);
         payload.append("additionalInfo", formData.additionalInfo);
         payload.append("questionTypes", JSON.stringify(formData.questionTypes));
-        const response = await axios.post("http://localhost:5000/api/assignment/generate", payload)
-        console.log("Response from server:", response.data);
-       
-            setFormData({
-        pdf: null,
-        dueDate: "",
-        additionalInfo: "",
+        const response = await axios.post("http://localhost:3000/api/assignment/generate", payload)
+        console.log("Response from server:", response.data.assignmentId);
+        asgIdset(response.data.assignmentId)
+        console.log(`this is the current id here ${currentId}`)
 
-        questionTypes: [
-            {
-                type: "Multiple Choice Questions",
-                questions: 5,
-                marks: 1,
-            },
-            {
-                type: "Short Questions",
-                questions: 3,
-                marks: 2,
-            },
-            {
-                type: "Long Questions",
-                questions: 2,
-                marks: 5,
-            },
-            {
-                type: "Diagram / Graph Based",
-                questions: 2,
-                marks: 5,
-            },
-            {
-                type: "Numerical Problems",
-                questions: 4,
-                marks: 3,
-            },
-        ],
-    })
-        
-        setOpen(false)
+        setFormData({
+            title:"",
+            pdf: null,
+            dueDate: "",
+            additionalInfo: "",
+
+            questionTypes: [
+                {
+                    type: "Multiple Choice Questions",
+                    questions: 5,
+                    marks: 1,
+                },
+                {
+                    type: "Short Questions",
+                    questions: 3,
+                    marks: 2,
+                },
+                {
+                    type: "Long Questions",
+                    questions: 2,
+                    marks: 5,
+                },
+                {
+                    type: "Diagram / Graph Based",
+                    questions: 2,
+                    marks: 5,
+                },
+                {
+                    type: "Numerical Problems",
+                    questions: 4,
+                    marks: 3,
+                },
+            ],
+        })
+
+
     }
     const handleFileOnChange = (e) => {
         setFormData({
@@ -207,6 +230,25 @@ export default function CreateAssignmentForm({
                     </button>
 
                 </div>
+                {/* Assignment Title */}
+                <div className="mb-6">
+
+                    <label className="block mb-2 font-medium">
+                        Assignment Title
+                    </label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="Enter assignment title..."
+                        value={formData.title}
+                        onChange={handleOnChange}
+                        className="w-full border rounded-xl p-3"
+                        required
+                    />
+
+                </div>
+
 
                 {/* PDF Upload */}
                 <div className="mb-6">
@@ -220,6 +262,7 @@ export default function CreateAssignmentForm({
                         accept=".pdf"
                         onChange={handleFileOnChange}
                         className="w-full border rounded-xl p-3"
+                        required
                     />
 
                 </div>
@@ -237,6 +280,7 @@ export default function CreateAssignmentForm({
                         onChange={handleOnChange}
                         name="dueDate"
                         className="w-full border rounded-xl p-3"
+                        required
                     />
 
                 </div>
@@ -286,20 +330,20 @@ export default function CreateAssignmentForm({
                                 </div>
 
                                 {/* this is the delete button  */}
-                                
+
 
                                 <div className="flex gap-4">
                                     <button
-                                    onClick={() => handleDeleteQuestionType(index)}
-                                    className="
+                                        onClick={() => handleDeleteQuestionType(index)}
+                                        className="
       text-red-500
       font-medium
       hover:text-red-700
       cursor-pointer
     "
-                                >
-                                    Delete
-                                </button>
+                                    >
+                                        Delete
+                                    </button>
 
                                     <div>
 
@@ -312,6 +356,7 @@ export default function CreateAssignmentForm({
                                             value={question.questions}
                                             className="w-20 border rounded-lg p-2"
                                             onChange={(e) => handleNoOfQuestionChange(index, e.target.value)}
+                                            required
                                         />
 
                                     </div>
@@ -327,6 +372,7 @@ export default function CreateAssignmentForm({
                                             value={question.marks}
                                             className="w-20 border rounded-lg p-2"
                                             onChange={(e) => handleMarksChange(index, e.target.value)}
+                                            required
                                         />
 
                                     </div>
@@ -385,7 +431,7 @@ export default function CreateAssignmentForm({
 
                 {/* Submit Button */}
                 <button
-                onClick={handleOnSubmit}
+                    onClick={handleOnSubmit}
                     className="
             w-full
             bg-black
