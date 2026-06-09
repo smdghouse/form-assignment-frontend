@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-// import useWebsocket from "../Hooks/useWebsocket.jsx";
+const baseUrl = import.meta.env.VITE_BACKEND_URL;// import useWebsocket from "../Hooks/useWebsocket.jsx";
 export default function CreateAssignmentForm({
     open,
     setOpen,
@@ -73,7 +73,7 @@ export default function CreateAssignmentForm({
         payload.append("dueDate", formData.dueDate);
         payload.append("additionalInfo", formData.additionalInfo);
         payload.append("questionTypes", JSON.stringify(formData.questionTypes));
-        const response = await axios.post("http://localhost:3000/api/assignment/generate", payload)
+        const response = await axios.post(`${baseUrl}/api/assignment/generate`, payload)
         console.log("Response from server:", response.data.assignmentId);
         asgIdset(response.data.assignmentId)
         console.log(`this is the current id here ${currentId}`)
