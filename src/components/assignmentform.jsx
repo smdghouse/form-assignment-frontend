@@ -50,8 +50,7 @@ export default function CreateAssignmentForm({
             alert("Please upload a PDF");
             return;
         }
-        if(!formData.title)
-        {
+        if (!formData.title) {
             alert("please enter title")
             return;
         }
@@ -68,7 +67,7 @@ export default function CreateAssignmentForm({
         // Here you can handle the form submission, e.g., send the data to the backend
         console.log("Form Data:", formData);
         const payload = new FormData();
-        payload.append("title",formData.title)
+        payload.append("title", formData.title)
         payload.append("pdf", formData.pdf);
         payload.append("dueDate", formData.dueDate);
         payload.append("additionalInfo", formData.additionalInfo);
@@ -79,7 +78,7 @@ export default function CreateAssignmentForm({
         console.log(`this is the current id here ${currentId}`)
 
         setFormData({
-            title:"",
+            title: "",
             pdf: null,
             dueDate: "",
             additionalInfo: "",
@@ -190,19 +189,16 @@ export default function CreateAssignmentForm({
             {/* Drawer */}
             <div
                 className={`
-          fixed
-          bottom-0
-          left-0
-          right-0
-          bg-white
-          rounded-t-[32px]
-          z-50
-          max-h-[90vh]
-          overflow-y-auto
-          p-8
-          transition-transform
-          duration-300
-          ease-in-out
+  fixed
+  bottom-0
+  left-0
+  right-0
+  bg-white
+  rounded-t-[32px]
+  z-50
+  h-[90vh]
+  overflow-y-auto
+  p-4 md:p-8
           ${open
                         ? "translate-y-0"
                         : "translate-y-full"
@@ -213,8 +209,7 @@ export default function CreateAssignmentForm({
                 <div className="flex justify-between items-center mb-8">
 
                     <div>
-                        <h1 className="text-3xl font-bold">
-                            Assignment Details
+                        <h1 className="text-2xl md:text-3xl font-bold">                            Assignment Details
                         </h1>
 
                         <p className="text-gray-500 mt-2">
@@ -297,8 +292,15 @@ export default function CreateAssignmentForm({
                         {formData.questionTypes.map((question, index) => (
                             <div
                                 key={index}
-                                className="border rounded-2xl p-4 flex justify-between items-center"
-
+                                className="
+border
+rounded-2xl
+p-4
+flex
+flex-col
+md:flex-row
+gap-4
+"
                             >
                                 <div>
 
@@ -332,18 +334,17 @@ export default function CreateAssignmentForm({
                                 {/* this is the delete button  */}
 
 
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={() => handleDeleteQuestionType(index)}
-                                        className="
+                                <div className="flex flex-col sm:flex-row gap-4 w-full">                                    <button
+                                    onClick={() => handleDeleteQuestionType(index)}
+                                    className="
       text-red-500
       font-medium
       hover:text-red-700
       cursor-pointer
     "
-                                    >
-                                        Delete
-                                    </button>
+                                >
+                                    Delete
+                                </button>
 
                                     <div>
 
@@ -354,8 +355,7 @@ export default function CreateAssignmentForm({
                                         <input
                                             type="number"
                                             value={question.questions}
-                                            className="w-20 border rounded-lg p-2"
-                                            onChange={(e) => handleNoOfQuestionChange(index, e.target.value)}
+                                            className="w-full sm:w-20 border rounded-lg p-2" onChange={(e) => handleNoOfQuestionChange(index, e.target.value)}
                                             required
                                         />
 
@@ -370,8 +370,7 @@ export default function CreateAssignmentForm({
                                         <input
                                             type="number"
                                             value={question.marks}
-                                            className="w-20 border rounded-lg p-2"
-                                            onChange={(e) => handleMarksChange(index, e.target.value)}
+                                            className="w-full sm:w-20 border rounded-lg p-2" onChange={(e) => handleMarksChange(index, e.target.value)}
                                             required
                                         />
 

@@ -14,19 +14,19 @@ const Popup = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-8 mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl mx-4 h-[90vh] overflow-hidden">
 
-                {/* Close Button */}
+                {/* Fixed Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-5 right-5 p-2 rounded-full hover:bg-gray-100 transition"
+                    className="absolute top-5 right-5 z-[9999] p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition"
                 >
                     <FaTimes size={20} />
                 </button>
 
                 {/* Loading State */}
                 {isLoading ? (
-                    <div className="flex flex-col items-center justify-center py-16">
+                    <div className="flex flex-col items-center justify-center h-full p-8">
                         <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
 
                         <h2 className="mt-8 text-2xl font-bold text-gray-900">
@@ -49,7 +49,7 @@ const Popup = ({
                         </div>
                     </div>
                 ) : (
-                    <>
+                    <div className="h-full overflow-y-auto p-8">
                         {/* Success Header */}
                         <div className="flex items-center gap-3 mb-8">
                             <FaCheckCircle
@@ -77,18 +77,16 @@ const Popup = ({
                             </button>
 
                             <button
-                                onClick={()=>
-                                {
-                                    console.log("downloading....")
-                                }
-                                }
+                                onClick={() => {
+                                    console.log("downloading....");
+                                }}
                                 className="flex items-center gap-2 px-5 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition"
                             >
                                 <FaDownload />
                                 Download PDF
                             </button>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </div>
